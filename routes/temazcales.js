@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var Temazcal = require("../models/temazcal");
+var middleware = require("../middleware");
 
 router.get("/", function(req, res){
     Temazcal.find({}, function(err, allTemazcales){
@@ -13,7 +14,7 @@ router.get("/", function(req, res){
     
 });
 
-router.post("/", isLoggedIn, function(req, res){
+router.post("/", middleware.isLoggedIn, function(req, res){
   var name = req.body.name;
    var image = req.body.image;
    var desc = req.body.description;
@@ -32,7 +33,7 @@ router.post("/", isLoggedIn, function(req, res){
    
 });
 
-router.get("/nuevo", isLoggedIn, function(req,res){
+router.get("/nuevo", middleware.isLoggedIn, function(req,res){
    res.render("temazcales/new.ejs");
 });
 
@@ -41,14 +42,14 @@ router.get("/:id", function(req, res){
         if(err){
             console.log(err);
         }else{
-            console.log(foundTemazcal);
+            //console.log(foundTemazcal);
         res.render("temazcales/show", {temazcal: foundTemazcal});
         }
     })
 });
 
 // EDIT
-router.get("/:id/editar", checkTemazcalOwnership, function(req, res){
+router.get("/:id/editar", middleware.checkTemazcalOwnership, function(req, res){
     
         Temazcal.findById(req.params.id, function(err, foundTemazcal){
               res.render("temazcales/edit", {temazcal: foundTemazcal});
@@ -58,7 +59,7 @@ router.get("/:id/editar", checkTemazcalOwnership, function(req, res){
 
 
 //UPDATE
-router.put("/:id", checkTemazcalOwnership, function(req, res){
+router.put("/:id", middleware.checkTemazcalOwnership, function(req, res){
    Temazcal.findByIdAndUpdate(req.params.id, req.body.temazcal, function(err, updatedTemzcal){
       if(err){
           res.redirect("/temazcales");
@@ -69,7 +70,7 @@ router.put("/:id", checkTemazcalOwnership, function(req, res){
 });
 
 //destroy
-router.delete("/:id", checkTemazcalOwnership, function(req, res){
+router.delete("/:id", middleware.checkTemazcalOwnership, function(req, res){
     Temazcal.findByIdAndRemove(req.params.id, function(err){
         if(err){
             res.redirect("/temazcales");
@@ -79,31 +80,7 @@ router.delete("/:id", checkTemazcalOwnership, function(req, res){
     })
 })
 
-//middleware
-function isLoggedIn(req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    }
-    res.redirect("/login");
-}
 
-function checkTemazcalOwnership(req, res, next){
-    if(req.isAuthenticated()){
-        Temazcal.findById(req.params.id, function(err, foundTemazcal){
-           if(err){
-               res.redirect("back");
-           } else {
-               if(foundTemazcal.author.id.equals(req.user._id)) {
-                   next();
-               } else {
-                   res.redirect("back");
-               }
-           }
-        });
-    } else {
-        res.redirect("back");
-    }
-}
 
 
 module.exports = router;
