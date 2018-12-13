@@ -1,0 +1,37 @@
+<% include ../partials/header %>
+
+
+
+<div class="container">
+    <header class="jumbotron">
+        <div class="container">
+        <h1>Bienvenido a Vamos al Temazcal</h1>
+        <p>La lista más grande de Temazcales en México </p>
+        <p>
+           <a class="btn btn-primary btn-lg" href="/temazcales/nuevo">Agregar un Temazcal</a> 
+        </p>
+    </div>
+    </header>
+    
+    
+    <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+        <div class="col-lg-12">
+            <h3>Nuestros Temazcales más populares</h3>
+        </div>
+        <% temazcales.forEach(function(temazcal){ %>
+            <div class="col-md-3 col-sm-6">
+                <div class="thumbnail">
+                    <img src="<%= temazcal.image%>">
+                    <div class="caption">
+                        <h4><%= temazcal.name %> </h4>
+                    </div>
+                    <p>
+                        <a href="/temazcales/<%= temazcal._id %>" class="btn btn-primary">Más info</a>
+                    </p>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>
+
+<% include ../partials/footer %>
