@@ -10,6 +10,8 @@ var express         = require ("express"),
     User            = require("./models/user"),
     seedDB        = require("./seeds");
     // seedDB(); //seed the database
+    var port = process.env.PORT || "8080";
+    var ip = process.env.IP || "159.203.13.74";
     
     var commentRoutes = require("./routes/comments"),
         temazcalesRoutes = require("./routes/temazcales"),
@@ -43,6 +45,6 @@ app.use(indexRoutes);
 app.use("/temazcales/:id/comentarios", commentRoutes);
 app.use("/temazcales", temazcalesRoutes);
 
-app.listen(process.env.PORT, process.env.IP, function(){
+app.listen(port, ip, function(){
     console.log("Temazcales en Mexico server on");
 })
